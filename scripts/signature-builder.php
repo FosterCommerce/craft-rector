@@ -47,7 +47,7 @@ if ($excludeNamespaces) {
     $excludeNamespaces = array_map(fn($namespace) => normalizeNamespace($namespace), explode(',', $excludeNamespaces));
 }
 
-$filterNamespace = function($class) use ($namespaces, $excludeNamespaces): bool {
+$filterNamespace = function ($class) use ($namespaces, $excludeNamespaces): bool {
     if ($namespaces) {
         $include = false;
         foreach ($namespaces as $namespace) {
@@ -174,16 +174,24 @@ final class SignatureBuilder
         return $this->signatures;
     }
 
+    private function serializeTypeCallback(string $className): callable
+    {
+        return function (ReflectionNamedType|ReflectionIntersectionType $type) use ($className): string {
+            if ($type instanceof ReflectionIntersectionType) {
+                return implode('|', array_map($this->serializeTypeCallback($className), $type->getTypes()));
+            }
+            $name = $type->getName();
+            return $name === 'self' ? $className : $name;
+        };
+    }
+
     private function serializeType(?ReflectionType $type, string $className): ?string
     {
         if ($type === null) {
             return null;
         }
         if ($type instanceof ReflectionUnionType) {
-            return implode('|', array_map(function(ReflectionNamedType $type) use ($className) {
-                $name = $type->getName();
-                return $name === 'self' ? $className : $name;
-            }, $type->getTypes()));
+            return implode('|', array_map($this->serializeTypeCallback($className), $type->getTypes()));
         }
         // todo:
 //        if ($type instanceof ReflectionIntersectionType) {
@@ -213,7 +221,7 @@ final class SignatureBuilder
 
         $parentClass = $class->getParentClass() ?: null;
         $properties = $class->getProperties(ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED);
-        usort($properties, fn(ReflectionProperty $a, ReflectionProperty$b) => $a->getName() <=> $b->getName());
+        usort($properties, fn(ReflectionProperty $a, ReflectionProperty $b) => $a->getName() <=> $b->getName());
 
         foreach ($properties as $property) {
             $declaringClass = $property->getDeclaringClass();

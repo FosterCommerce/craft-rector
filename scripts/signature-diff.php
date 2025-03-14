@@ -113,16 +113,25 @@ final class SignatureDiffer
         return !isset($oldParams[$position]) || $paramType !== $this->serializeType($oldParams[$position]->getType(), $className);
     }
 
+    private function serializeTypeCallback(string $className): callable
+    {
+        return function (ReflectionNamedType|ReflectionIntersectionType $type) use ($className): string {
+            if ($type instanceof ReflectionIntersectionType) {
+                return implode('|', array_map($this->serializeTypeCallback($className), $type->getTypes()));
+            }
+            $name = $type->getName();
+            return $name === 'self' ? $className : $name;
+        };
+    }
+
     private function serializeType(?ReflectionType $type, string $className): ?string
     {
         if ($type === null) {
             return null;
         }
+
         if ($type instanceof ReflectionUnionType) {
-            return implode('|', array_map(function(ReflectionNamedType $type) use ($className) {
-                $name = $type->getName();
-                return $name === 'self' ? $className : $name;
-            }, $type->getTypes()));
+            return implode('|', array_map($this->serializeTypeCallback($className), $type->getTypes()));
         }
         // todo:
 //        if ($type instanceof ReflectionIntersectionType) {

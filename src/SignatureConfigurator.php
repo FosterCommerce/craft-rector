@@ -76,7 +76,7 @@ final class SignatureConfigurator
 
     private static function type(string $type): Type
     {
-        if (! isset(self::$types[$type])) {
+        if (!isset(self::$types[$type])) {
             self::$types[$type] = self::createType($type);
         }
 

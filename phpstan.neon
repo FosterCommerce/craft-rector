@@ -1,8 +1,6 @@
 parameters:
     level: 8
 
-    checkGenericClassInNonGenericObjectType: false
-
     paths:
         - ecs.php
         - scripts
@@ -11,6 +9,8 @@ parameters:
         - tests
 
     ignoreErrors:
+        - identifier: missingType.generics
+
         - '#expects string, ((.*?)string|string(.*?)) given#'
 
         # false positives on static calls
