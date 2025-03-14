@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace craft\rector;
 
-use Rector\Set\Contract\SetListInterface;
-
-final class SetList implements SetListInterface
+final class SetList
 {
     /**
      * @var string
