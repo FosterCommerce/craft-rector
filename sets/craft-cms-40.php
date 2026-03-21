@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use craft\rector\Rector\MethodCallToPropertyFetchRector;
 use craft\rector\SignatureConfigurator;
 use Rector\Arguments\Rector\MethodCall\RemoveMethodCallParamRector;
 use Rector\Arguments\ValueObject\RemoveMethodCallParam;
@@ -12,8 +13,6 @@ use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameClassConstFetch;
 use Rector\Symfony\Set\TwigSetList;
-use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
-use Rector\Transform\ValueObject\MethodCallToPropertyFetch;
 
 return static function(RectorConfig $rectorConfig): void {
     $rectorConfig->import(__DIR__ . '/craft-cms-40/assets.php');
@@ -43,7 +42,11 @@ return static function(RectorConfig $rectorConfig): void {
 
     $rectorConfig
         ->ruleWithConfiguration(MethodCallToPropertyFetchRector::class, [
-            new MethodCallToPropertyFetch('craft\elements\User', 'getFullName', 'fullName'),
+            [
+                'class' => 'craft\elements\User',
+                'method' => 'getFullName',
+                'property' => 'fullName',
+            ],
         ]);
 
     $rectorConfig
