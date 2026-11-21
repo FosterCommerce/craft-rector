@@ -25,4 +25,6 @@ jobs:
                     php-version: ${{ matrix.php_version }}
                     coverage: none
 
+            -   uses: "ramsey/composer-install@v3"
+
             -   run: vendor/bin/phpunit

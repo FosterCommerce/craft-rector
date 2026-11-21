@@ -1,16 +1,18 @@
 <?php
 
-class Foo extends \craft\web\Controller
+class ScreenResponseFoo extends \craft\web\Controller
 {
     public function actionFoo(): \yii\web\Response {
-        $response = $this->asCpScreen()
+        return $this->asCpScreen()
             ->additionalButtons('')
             ->content('')
-            ->contextMenu('')
             ->notice('')
             ->pageSidebar('')
             ->sidebar('');
+    }
 
+    public function actionBar(): void {
+        $response = $this->asCpScreen();
         $additionalButtons = $response->additionalButtons;
         $content = $response->content;
         $contextMenu = $response->contextMenu;
@@ -24,23 +26,25 @@ class Foo extends \craft\web\Controller
 -----
 <?php
 
-class Foo extends \craft\web\Controller
+class ScreenResponseFoo extends \craft\web\Controller
 {
     public function actionFoo(): \yii\web\Response {
-        $response = $this->asCpScreen()
+        return $this->asCpScreen()
             ->additionalButtonsHtml('')
             ->contentHtml('')
-            ->contextMenuHtml('')
             ->noticeHtml('')
             ->pageSidebarHtml('')
-            ->sidebarHtml('');
+            ->metaSidebarHtml('');
+    }
 
+    public function actionBar(): void {
+        $response = $this->asCpScreen();
         $additionalButtons = $response->additionalButtonsHtml;
         $content = $response->contentHtml;
-        $contextMenu = $response->contextMenuHtml;
+        $contextMenu = $response->contextMenu;
         $notice = $response->noticeHtml;
         $pageSidebar = $response->pageSidebarHtml;
-        $sidebar = $response->sidebarHtml;
+        $sidebar = $response->metaSidebarHtml;
     }
 }
 

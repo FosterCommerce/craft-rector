@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use craft\rector\Rector\RenameMethodCallRector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\ClassConstFetch\RenameClassConstFetchRector;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
@@ -14,8 +15,9 @@ return static function(RectorConfig $rectorConfig): void {
             new RenameClassAndConstFetch('craft\services\Assets', 'EVENT_GET_ASSET_URL', 'craft\elements\Asset', 'EVENT_DEFINE_URL'),
         ]);
 
-    $rectorConfig
-        ->ruleWithConfiguration(RenameMethodRector::class, [
-            new MethodCallRename('craft\elements\Asset', 'getUri', 'getPath'),
-        ]);
+    $methodCallRenames = [
+        new MethodCallRename('craft\elements\Asset', 'getUri', 'getPath'),
+    ];
+    $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, $methodCallRenames);
+    $rectorConfig->ruleWithConfiguration(RenameMethodCallRector::class, $methodCallRenames);
 };

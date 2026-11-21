@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace craft\rector;
 
+use craft\rector\Rector\AddPropertyTypeDeclarationRector;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\CallableType;
@@ -22,7 +23,6 @@ use PHPStan\Type\VoidType;
 use Rector\Config\RectorConfig;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddParamTypeDeclarationRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationRector;
-use Rector\TypeDeclaration\Rector\Property\AddPropertyTypeDeclarationRector;
 use Rector\TypeDeclaration\ValueObject\AddParamTypeDeclaration;
 use Rector\TypeDeclaration\ValueObject\AddPropertyTypeDeclaration;
 use Rector\TypeDeclaration\ValueObject\AddReturnTypeDeclaration;
@@ -76,9 +76,7 @@ final class SignatureConfigurator
 
     private static function type(string $type): Type
     {
-        if (! isset(self::$types[$type])) {
-            self::$types[$type] = self::createType($type);
-        }
+        self::$types[$type] ??= self::createType($type);
 
         return self::$types[$type];
     }
@@ -127,7 +125,6 @@ final class SignatureConfigurator
 
         // write private property
         $typesReflectionProperty = new ReflectionProperty($type, 'types');
-        $typesReflectionProperty->setAccessible(true);
         $typesReflectionProperty->setValue($type, $normalizedTypes);
 
         return $type;

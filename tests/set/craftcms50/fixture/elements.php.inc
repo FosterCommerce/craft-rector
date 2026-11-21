@@ -1,6 +1,6 @@
 <?php
 
-class Foo extends \craft\base\Element
+class ElementFoo extends \craft\base\Element
 {
     public function foo() {
         $hasCheckeredThumb = $this->getHasCheckeredThumb();
@@ -79,7 +79,7 @@ class Foo extends \craft\base\Element
 -----
 <?php
 
-class Foo extends \craft\base\Element
+class ElementFoo extends \craft\base\Element
 {
     public function foo() {
         $hasCheckeredThumb = $this->hasCheckeredThumb();
@@ -150,7 +150,8 @@ class Foo extends \craft\base\Element
             $sourceKey,
             $context,
             $includeContainer,
-            $showCheckboxes
+            $showCheckboxes,
+            $sortable
         );
     }
 }

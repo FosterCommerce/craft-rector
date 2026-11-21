@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use craft\rector\Rector\RenameMethodCallRector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\ClassConstFetch\RenameClassConstFetchRector;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
@@ -21,10 +22,11 @@ return static function(RectorConfig $rectorConfig): void {
             new RenameClassConstFetch('craft\models\FieldLayout', 'EVENT_DEFINE_STANDARD_FIELDS', 'EVENT_DEFINE_NATIVE_FIELDS'),
         ]);
 
-    $rectorConfig
-        ->ruleWithConfiguration(RenameMethodRector::class, [
-            new MethodCallRename('craft\behaviors\FieldLayoutBehavior', 'getFields', 'getCustomFields'),
-            new MethodCallRename('craft\models\FieldLayout', 'getAvailableStandardFields', 'getAvailableNativeFields'),
-            new MethodCallRename('craft\models\FieldLayout', 'getFields', 'getCustomFields'),
-        ]);
+    $methodCallRenames = [
+        new MethodCallRename('craft\behaviors\FieldLayoutBehavior', 'getFields', 'getCustomFields'),
+        new MethodCallRename('craft\models\FieldLayout', 'getAvailableStandardFields', 'getAvailableNativeFields'),
+        new MethodCallRename('craft\models\FieldLayout', 'getFields', 'getCustomFields'),
+    ];
+    $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, $methodCallRenames);
+    $rectorConfig->ruleWithConfiguration(RenameMethodCallRector::class, $methodCallRenames);
 };

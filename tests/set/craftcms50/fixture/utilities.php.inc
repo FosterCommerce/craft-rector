@@ -1,6 +1,6 @@
 <?php
 
-class Foo extends \craft\base\Utility
+class UtilityFoo extends \craft\base\Utility
 {
     public static function iconPath(): ?string {
         return 'icon.svg';
@@ -11,7 +11,7 @@ class Foo extends \craft\base\Utility
 -----
 <?php
 
-class Foo extends \craft\base\Utility
+class UtilityFoo extends \craft\base\Utility
 {
     public static function icon(): ?string {
         return 'icon.svg';

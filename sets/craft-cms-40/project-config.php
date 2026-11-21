@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use craft\rector\Rector\RenameMethodCallRector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\ClassConstFetch\RenameClassConstFetchRector;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
@@ -9,13 +10,14 @@ use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameClassAndConstFetch;
 
 return static function(RectorConfig $rectorConfig): void {
-    $rectorConfig
-        ->ruleWithConfiguration(RenameMethodRector::class, [
-            new MethodCallRename('craft\services\ProjectConfig', 'applyYamlChanges', 'applyExternalChanges'),
-            new MethodCallRename('craft\services\ProjectConfig', 'getDoesYamlExist', 'getDoesExternalConfigExist'),
-            new MethodCallRename('craft\services\ProjectConfig', 'getIsApplyingYamlChanges', 'getIsApplyingExternalChanges'),
-            new MethodCallRename('craft\services\ProjectConfig', 'regenerateYamlFromConfig', 'regenerateExternalConfig'),
-        ]);
+    $methodCallRenames = [
+        new MethodCallRename('craft\services\ProjectConfig', 'applyYamlChanges', 'applyExternalChanges'),
+        new MethodCallRename('craft\services\ProjectConfig', 'getDoesYamlExist', 'getDoesExternalConfigExist'),
+        new MethodCallRename('craft\services\ProjectConfig', 'getIsApplyingYamlChanges', 'getIsApplyingExternalChanges'),
+        new MethodCallRename('craft\services\ProjectConfig', 'regenerateYamlFromConfig', 'regenerateExternalConfig'),
+    ];
+    $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, $methodCallRenames);
+    $rectorConfig->ruleWithConfiguration(RenameMethodCallRector::class, $methodCallRenames);
 
     $rectorConfig
         ->ruleWithConfiguration(RenameClassConstFetchRector::class, [
