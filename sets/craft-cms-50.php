@@ -2,56 +2,58 @@
 
 declare(strict_types=1);
 
+use craft\rector\Rector\AddParentCallArgumentRector;
+use craft\rector\Rector\RemoveMethodCallParamRector;
+use craft\rector\Rector\RenameMethodCallRector;
+use craft\rector\Rector\RenameStaticMethodRector;
 use craft\rector\SignatureConfigurator;
 use PHPStan\Type\BooleanType;
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Arguments\ValueObject\ArgumentAdder;
 use Rector\Config\RectorConfig;
-use Rector\Removing\Rector\ClassMethod\ArgumentRemoverRector;
 use Rector\Removing\ValueObject\ArgumentRemover;
 use Rector\Renaming\Rector\ClassConstFetch\RenameClassConstFetchRector;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
-use Rector\Renaming\Rector\StaticCall\RenameStaticMethodRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameClassAndConstFetch;
 use Rector\Renaming\ValueObject\RenameClassConstFetch;
 use Rector\Renaming\ValueObject\RenameProperty;
 use Rector\Renaming\ValueObject\RenameStaticMethod;
 use Rector\ValueObject\Visibility;
-use Rector\Visibility\Rector\ClassMethod\ChangeMethodVisibilityRector;
+use Rector\Visibility\Rector\Class_\ChangeMethodVisibilityRector;
 use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 
 return static function(RectorConfig $rectorConfig): void {
-    $rectorConfig
-        ->ruleWithConfiguration(RenameMethodRector::class, [
-            // todo: not working in plugin
-            new MethodCallRename('yii\base\Application', 'getSections', 'getEntries'),
-            new MethodCallRename('craft\base\Element', 'getHasCheckeredThumb', 'hasCheckeredThumb'),
-            new MethodCallRename('craft\base\Element', 'getHasRoundedThumb', 'hasRoundedThumb'),
-            new MethodCallRename('craft\base\Element', 'getThumbAlt', 'thumbAlt'),
-            new MethodCallRename('craft\base\Element', 'getThumbUrl', 'thumbUrl'),
-            new MethodCallRename('craft\base\Element', 'tableAttributeHtml', 'attributeHtml'),
-            new MethodCallRename('craft\base\ElementInterface', 'getTableAttributeHtml', 'getAttributeHtml'),
-            new MethodCallRename('craft\base\FieldInterface', 'valueType', 'phpType'),
-            new MethodCallRename('craft\base\PreviewableFieldInterface', 'getTableAttributeHtml', 'getPreviewHtml'),
-            new MethodCallRename('craft\base\UtilityInterface', 'iconPath', 'icon'),
-            new MethodCallRename('craft\base\conditions\BaseCondition', 'conditionRuleTypes', 'selectableConditionRules'),
-            new MethodCallRename('craft\fields\BaseRelationField', 'tableAttributeHtml', 'previewHtml'),
-            new MethodCallRename('craft\web\CpScreenResponseBehavior', 'additionalButtons', 'additionalButtonsHtml'),
-            new MethodCallRename('craft\web\CpScreenResponseBehavior', 'content', 'contentHtml'),
-            new MethodCallRename('craft\web\CpScreenResponseBehavior', 'contextMenu', 'contextMenuHtml'),
-            new MethodCallRename('craft\web\CpScreenResponseBehavior', 'notice', 'noticeHtml'),
-            new MethodCallRename('craft\web\CpScreenResponseBehavior', 'pageSidebar', 'pageSidebarHtml'),
-            new MethodCallRename('craft\web\CpScreenResponseBehavior', 'sidebar', 'sidebarHtml'),
-            new MethodCallRename('craft\web\Response', 'additionalButtons', 'additionalButtonsHtml'),
-            new MethodCallRename('craft\web\Response', 'content', 'contentHtml'),
-            new MethodCallRename('craft\web\Response', 'contextMenu', 'contextMenuHtml'),
-            new MethodCallRename('craft\web\Response', 'notice', 'noticeHtml'),
-            new MethodCallRename('craft\web\Response', 'pageSidebar', 'pageSidebarHtml'),
-            new MethodCallRename('craft\web\Response', 'sidebar', 'sidebarHtml'),
-        ]);
+    $methodCallRenames = [
+        // todo: not working in plugin
+        new MethodCallRename('yii\base\Application', 'getSections', 'getEntries'),
+        new MethodCallRename('craft\base\Element', 'getHasCheckeredThumb', 'hasCheckeredThumb'),
+        new MethodCallRename('craft\base\Element', 'getHasRoundedThumb', 'hasRoundedThumb'),
+        new MethodCallRename('craft\base\Element', 'getThumbAlt', 'thumbAlt'),
+        new MethodCallRename('craft\base\Element', 'getThumbUrl', 'thumbUrl'),
+        new MethodCallRename('craft\base\Element', 'tableAttributeHtml', 'attributeHtml'),
+        new MethodCallRename('craft\base\ElementInterface', 'getTableAttributeHtml', 'getAttributeHtml'),
+        new MethodCallRename('craft\base\FieldInterface', 'valueType', 'phpType'),
+        new MethodCallRename('craft\base\PreviewableFieldInterface', 'getTableAttributeHtml', 'getPreviewHtml'),
+        new MethodCallRename('craft\base\UtilityInterface', 'iconPath', 'icon'),
+        new MethodCallRename('craft\base\conditions\BaseCondition', 'conditionRuleTypes', 'selectableConditionRules'),
+        new MethodCallRename('craft\fields\BaseRelationField', 'tableAttributeHtml', 'previewHtml'),
+        // Leave contextMenu, since Craft 5 replaced it with contextMenuItems(), which takes a callable
+        new MethodCallRename('craft\web\CpScreenResponseBehavior', 'additionalButtons', 'additionalButtonsHtml'),
+        new MethodCallRename('craft\web\CpScreenResponseBehavior', 'content', 'contentHtml'),
+        new MethodCallRename('craft\web\CpScreenResponseBehavior', 'notice', 'noticeHtml'),
+        new MethodCallRename('craft\web\CpScreenResponseBehavior', 'pageSidebar', 'pageSidebarHtml'),
+        new MethodCallRename('craft\web\CpScreenResponseBehavior', 'sidebar', 'metaSidebarHtml'),
+        new MethodCallRename('craft\web\Response', 'additionalButtons', 'additionalButtonsHtml'),
+        new MethodCallRename('craft\web\Response', 'content', 'contentHtml'),
+        new MethodCallRename('craft\web\Response', 'notice', 'noticeHtml'),
+        new MethodCallRename('craft\web\Response', 'pageSidebar', 'pageSidebarHtml'),
+        new MethodCallRename('craft\web\Response', 'sidebar', 'metaSidebarHtml'),
+    ];
+    $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, $methodCallRenames);
+    $rectorConfig->ruleWithConfiguration(RenameMethodCallRector::class, $methodCallRenames);
 
     $rectorConfig
         ->ruleWithConfiguration(ChangeMethodVisibilityRector::class, [
@@ -69,16 +71,14 @@ return static function(RectorConfig $rectorConfig): void {
             new RenameProperty('craft\fields\Matrix', 'maxBlocks', 'maxEntries'),
             new RenameProperty('craft\web\CpScreenResponseBehavior', 'additionalButtons', 'additionalButtonsHtml'),
             new RenameProperty('craft\web\CpScreenResponseBehavior', 'content', 'contentHtml'),
-            new RenameProperty('craft\web\CpScreenResponseBehavior', 'contextMenu', 'contextMenuHtml'),
             new RenameProperty('craft\web\CpScreenResponseBehavior', 'notice', 'noticeHtml'),
             new RenameProperty('craft\web\CpScreenResponseBehavior', 'pageSidebar', 'pageSidebarHtml'),
-            new RenameProperty('craft\web\CpScreenResponseBehavior', 'sidebar', 'sidebarHtml'),
+            new RenameProperty('craft\web\CpScreenResponseBehavior', 'sidebar', 'metaSidebarHtml'),
             new RenameProperty('craft\web\Response', 'additionalButtons', 'additionalButtonsHtml'),
             new RenameProperty('craft\web\Response', 'content', 'contentHtml'),
-            new RenameProperty('craft\web\Response', 'contextMenu', 'contextMenuHtml'),
             new RenameProperty('craft\web\Response', 'notice', 'noticeHtml'),
             new RenameProperty('craft\web\Response', 'pageSidebar', 'pageSidebarHtml'),
-            new RenameProperty('craft\web\Response', 'sidebar', 'sidebarHtml'),
+            new RenameProperty('craft\web\Response', 'sidebar', 'metaSidebarHtml'),
         ]);
 
     $rectorConfig
@@ -114,16 +114,16 @@ return static function(RectorConfig $rectorConfig): void {
             new RenameClassAndConstFetch('craft\models\Section', 'PROPAGATION_METHOD_CUSTOM', 'craft\enums\PropagationMethod', 'Custom'),
         ]);
 
-    $rectorConfig
-        ->ruleWithConfiguration(ArgumentAdderRector::class, [
-            // todo: make required (no default value)
-            new ArgumentAdder('craft\base\ElementInterface', 'indexHtml', 7, 'sortable', false, new BooleanType()),
-            // todo: not working in test
-            new ArgumentAdder('craft\base\Field', 'inputHtml', 2, 'inline', false, new BooleanType()),
-        ]);
+    $argumentAdders = [
+        // todo: make required (no default value)
+        new ArgumentAdder('craft\base\ElementInterface', 'indexHtml', 7, 'sortable', false, new BooleanType()),
+        new ArgumentAdder('craft\base\Field', 'inputHtml', 2, 'inline', false, new BooleanType()),
+    ];
+    $rectorConfig->ruleWithConfiguration(ArgumentAdderRector::class, $argumentAdders);
+    $rectorConfig->ruleWithConfiguration(AddParentCallArgumentRector::class, $argumentAdders);
 
     $rectorConfig
-        ->ruleWithConfiguration(ArgumentRemoverRector::class, [
+        ->ruleWithConfiguration(RemoveMethodCallParamRector::class, [
             new ArgumentRemover('craft\services\Elements', 'duplicateElement', 3, null),
             new ArgumentRemover('craft\services\ProjectConfig', 'saveModifiedConfigData', 0, null),
         ]);

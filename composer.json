@@ -2,7 +2,7 @@
     "name": "fostercommerce/craft-rector",
     "description": "A Foster Commmerce fork of Rector sets to automate Craft CMS upgrades",
     "require": {
-        "rector/rector": "^2.3"
+        "rector/rector": "^2.8"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0",

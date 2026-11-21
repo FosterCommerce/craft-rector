@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use craft\rector\Rector\RenameMethodCallRector;
 use craft\rector\SignatureConfigurator;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
@@ -15,10 +16,11 @@ return static function(RectorConfig $rectorConfig): void {
             new RenameProperty('craft\commerce\model\ProductType', 'titleFormat', 'variantTitleFormat'),
         ]);
 
-    $rectorConfig
-        ->ruleWithConfiguration(RenameMethodRector::class, [
-            new MethodCallRename('craft\commerce\services\ShippingMethods', 'getAvailableShippingMethods', 'getMatchingShippingMethods'),
-        ]);
+    $methodCallRenames = [
+        new MethodCallRename('craft\commerce\services\ShippingMethods', 'getAvailableShippingMethods', 'getMatchingShippingMethods'),
+    ];
+    $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, $methodCallRenames);
+    $rectorConfig->ruleWithConfiguration(RenameMethodCallRector::class, $methodCallRenames);
 
     // Property/method signatures
     SignatureConfigurator::configure($rectorConfig, 'craft-commerce-40');

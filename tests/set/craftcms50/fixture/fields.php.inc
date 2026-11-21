@@ -1,6 +1,6 @@
 <?php
 
-class Foo extends \craft\base\Field implements \craft\base\PreviewableFieldInterface
+class FieldFoo extends \craft\base\Field implements \craft\base\PreviewableFieldInterface
 {
     public static function valueType(): string {
         return 'string';
@@ -33,7 +33,7 @@ $maxBlocks = $matrixField->maxBlocks;
 -----
 <?php
 
-class Foo extends \craft\base\Field implements \craft\base\PreviewableFieldInterface
+class FieldFoo extends \craft\base\Field implements \craft\base\PreviewableFieldInterface
 {
     public static function phpType(): string {
         return 'string';

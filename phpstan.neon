@@ -17,11 +17,3 @@ parameters:
         -
             message: '#Cannot call static method getLoader\(\) on class-string\|null#'
             path: scripts/signature-builder.php
-
-        -
-            message: '#Cannot call method getReturnType\(\) on ReflectionMethod\|null#'
-            path:  scripts/signature-builder.php
-
-        -
-            message: '#Cannot call method getType\(\) on ReflectionProperty\|null#'
-            path: scripts/signature-builder.php

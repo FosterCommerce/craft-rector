@@ -34,7 +34,7 @@ $oldSignatures = require $signatureFile;
 function getCliOption(string $name, ?string $alias = null): string|array|null
 {
     $pos = array_search("--$name", $_SERVER['argv']) ?: ($alias ? array_search("-$alias", $_SERVER['argv']) : null);
-    return $pos && isset($_SERVER['argv'][$pos + 1]) ? $_SERVER['argv'][$pos + 1] : null;
+    return is_int($pos) && isset($_SERVER['argv'][$pos + 1]) ? $_SERVER['argv'][$pos + 1] : null;
 }
 
 function normalizeNamespace(string $namespace): string
@@ -117,7 +117,7 @@ final class SignatureDiffer
     {
         return function (ReflectionNamedType|ReflectionIntersectionType $type) use ($className): string {
             if ($type instanceof ReflectionIntersectionType) {
-                return implode('|', array_map($this->serializeTypeCallback($className), $type->getTypes()));
+                return implode('&', array_map($this->serializeTypeCallback($className), $type->getTypes()));
             }
             $name = $type->getName();
             return $name === 'self' ? $className : $name;
