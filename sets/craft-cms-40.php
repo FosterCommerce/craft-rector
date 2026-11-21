@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use craft\rector\Rector\MethodCallToPropertyFetchRector;
 use craft\rector\SignatureConfigurator;
-use Rector\Arguments\Rector\MethodCall\RemoveMethodCallParamRector;
-use Rector\Arguments\ValueObject\RemoveMethodCallParam;
 use Rector\Config\RectorConfig;
+use Rector\Removing\Rector\ClassMethod\ArgumentRemoverRector;
+use Rector\Removing\ValueObject\ArgumentRemover;
 use Rector\Renaming\Rector\ClassConstFetch\RenameClassConstFetchRector;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
@@ -50,13 +50,13 @@ return static function(RectorConfig $rectorConfig): void {
         ]);
 
     $rectorConfig
-        ->ruleWithConfiguration(RemoveMethodCallParamRector::class, [
-            new RemoveMethodCallParam('craft\helpers\Db', 'batchInsert', 3),
-            new RemoveMethodCallParam('craft\helpers\Db', 'insert', 2),
-            new RemoveMethodCallParam('craft\db\Command', 'batchInsert', 3),
-            new RemoveMethodCallParam('craft\db\Command', 'insert', 2),
-            new RemoveMethodCallParam('craft\db\Migration', 'batchInsert', 3),
-            new RemoveMethodCallParam('craft\db\Migration', 'insert', 2),
+        ->ruleWithConfiguration(ArgumentRemoverRector::class, [
+            new ArgumentRemover('craft\helpers\Db', 'batchInsert', 3, null),
+            new ArgumentRemover('craft\helpers\Db', 'insert', 2, null),
+            new ArgumentRemover('craft\db\Command', 'batchInsert', 3, null),
+            new ArgumentRemover('craft\db\Command', 'insert', 2, null),
+            new ArgumentRemover('craft\db\Migration', 'batchInsert', 3, null),
+            new ArgumentRemover('craft\db\Migration', 'insert', 2, null),
         ]);
 
     $rectorConfig
